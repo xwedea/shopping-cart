@@ -61,11 +61,14 @@ def add_to_cart():
 	name = request.form["product-name"]
 
 	cart = session["cart"]
-	cart.append({
-		"id": id,
-		"name": name,
-		"quantity": 1
-	})
+	print(request.form)
+	if (id in cart.keys()):
+		cart[id]["quantity"] += 1
+	else:
+		cart[id] = {
+			"name": name,
+			"quantity": 1
+		}
 	session["cart"] = cart
 	
 	return redirect("/cart")
@@ -86,7 +89,7 @@ def login():
 		if user:
 			session["email"] = email
 			session["name"] = user["name"]
-			session["cart"] = []
+			session["cart"] = {}
 			return redirect("/")
 		else:
 			error = "Invalid email or password!"
@@ -135,6 +138,7 @@ def cart():
 	if request.method == "GET":
 		if session.get("email"):
 			print(cart)
+			print(type(cart))
 			return render_template("cart.html", cart=cart)
 		else:
 			return redirect("login")

@@ -36,14 +36,14 @@
 							<th>Name</th>
 							<th>Quantity</th>
 						</tr>
-						{% for product in cart %}
+						{% for id in cart.keys() %}
 							<tr>
 								<td>
-									<input type="hidden" name="id", value="{{product['id']}}">
-									<input type="text" name="name" value="{{product['name']}}">
+									<input type="hidden" name="id", value="{{id}}">
+									<input type="text" name="name" value="{{cart[id]['name']}}">
 								</td>
 								<td>
-									<input type="text" name="quantity-{{product['id']}}" value="{{product['quantity']}}">
+									<input type="text" name="quantity-{{cart[id]['name']}}" value="{{cart[id]['quantity']}}">
 								</td>
 							</tr>
 						{% endfor %}
