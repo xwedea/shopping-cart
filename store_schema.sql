@@ -20,19 +20,20 @@ CREATE TABLE product (
 
 DROP TABLE IF EXISTS orders;
 CREATE TABLE orders (
-	customer_email varchar(255) PRIMARY KEY,
+	customer_email varchar(255),
 	order_date DATETIME NOT NULL,
-	total int NOT NULL
+	total int NOT NULL,
+	PRIMARY KEY (customer_email, order_date)
 );
 
 DROP TABLE IF EXISTS order_product;
 CREATE TABLE order_product (
-  customer_email varchar(255),
+  email varchar(255),
 	date_of_order DATETIME,
 	product_id int,
 	quantity int NOT NULL,
-	PRIMARY KEY (customer_email, date_of_order, product_id),
-	FOREIGN KEY (customer_email, date_of_order) REFERENCES orders(customer_email, order_date)
+	PRIMARY KEY (email, date_of_order, product_id),
+	FOREIGN KEY (email, date_of_order) REFERENCES orders(customer_email, order_date)
 );
 
 DROP TABLE IF EXISTS category;
