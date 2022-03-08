@@ -26,6 +26,7 @@
 			</ul>
 		</header>
 	  <div class="container">
+			<span>{{msg}}</span>
 			<div class="cart-container">
 				<form action="/cart" method="post">
 					<input type="submit" name="action" value="checkout">
@@ -36,14 +37,15 @@
 							<th>Name</th>
 							<th>Quantity</th>
 						</tr>
-						{% for product in cart %}
+						{% for id in cart.keys() %}
 							<tr>
 								<td>
-									<input type="hidden" name="id", value="{{product['id']}}">
-									<input type="text" name="name" value="{{product['name']}}">
+									<input type="hidden" name="id", value="{{id}}">
+									<input type="hidden" name="name" value="{{cart[id]['name']}}">
+									<span>{{cart[id]['name']}}</span>
 								</td>
 								<td>
-									<input type="text" name="quantity-{{product['id']}}" value="{{product['quantity']}}">
+									<input type="text" name="quantity-{{id}}" value="{{cart[id]['quantity']}}">
 								</td>
 							</tr>
 						{% endfor %}

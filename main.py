@@ -7,7 +7,7 @@ from livereload import Server
 import re
 
 app = Flask('app')
-app.secret_key = "CHANGE ME"
+app.secret_key = "CHANGE ME, ok"
 
 @app.route('/')
 def main_page():
@@ -61,11 +61,14 @@ def add_to_cart():
 	name = request.form["product-name"]
 
 	cart = session["cart"]
-	cart.append({
-		"id": id,
-		"name": name,
-		"quantity": 1
-	})
+	print(request.form)
+	if (id in cart.keys()):
+		cart[id]["quantity"] += 1
+	else:
+		cart[id] = {
+			"name": name,
+			"quantity": 1
+		}
 	session["cart"] = cart
 	
 	return redirect("/cart")
@@ -86,7 +89,7 @@ def login():
 		if user:
 			session["email"] = email
 			session["name"] = user["name"]
-			session["cart"] = []
+			session["cart"] = {}
 			return redirect("/")
 		else:
 			error = "Invalid email or password!"
@@ -131,20 +134,63 @@ def cart():
 	connection.row_factory = sqlite3.Row
 	cursor = connection.cursor()
 
-	cart = session["cart"]
+	msg = ""
+
 	if request.method == "GET":
 		if session.get("email"):
+			cart = session["cart"]
 			print(cart)
+			print(type(cart))
 			return render_template("cart.html", cart=cart)
 		else:
 			return redirect("login")
 	else: # POST
+		cart = session["cart"]
 		if request.form["action"] == "checkout":
-			print("checkout")
+			# error_qty = False
+			for id in cart.keys():
+				cursor.execute("select * from product where id = ?", (id,))
+				product = cursor.fetchone()
+				new_qty = int(request.form["quantity-" + str(id)])					
+				if new_qty > product["stock"]:
+					msg = f"There are {product['stock']} {product['name']} in stock! You specified {new_qty}"
+					# error_qty = True
+					return render_template("cart.html", cart=cart, msg=msg)
+				elif new_qty < 0:
+					msg = f"We don't know how to deliver {new_qty} {product['name']}"
+					# error_qty = True
+					return render_template("cart.html", cart=cart, msg=msg)
+			
+			for id in cart.keys():
+				cursor.execute("select * from product where id = ?", (id,))
+				product = cursor.fetchone()
+				new_qty = int(request.form["quantity-" + str(id)])
+
+				cursor.execute("update product set stock = ? where id = ?", (product['stock']-new_qty, id))
+				connection.commit()
+				session["cart"] = {}
+			
+
 		elif request.form["action"] == "update":
-			print("update")
-	
-	return render_template("cart.html", cart=cart)
+			copy_cart = cart.copy()
+			for id in copy_cart:
+				cursor.execute("select * from product where id = ?", (id,))
+				product = cursor.fetchone()
+				new_qty = int(request.form["quantity-" + str(id)])
+				if (new_qty == 0):
+					cart.pop(id)
+					session["cart"] = cart
+				elif new_qty > product["stock"]:
+					msg = f"There are {product['stock']} {product['name']} in stock! You specified {new_qty}"
+				elif new_qty < 0:
+					msg = f"We don't know how to deliver {new_qty} {product['name']}"
+				else: # VALID INPUT
+					cart[id]["quantity"] = new_qty
+					session["cart"] = cart
+
+	cart = session["cart"]
+		
+	return render_template("cart.html", cart=cart, msg=msg)
 
 
 @app.route('/orders')
