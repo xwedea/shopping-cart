@@ -24,6 +24,15 @@
 				<li><a class="navigation" href="/signup">Sign up</a></li>
 			</ul>
 		</header>
+		<div class="orders-container">
+			{% for order in orders %}
+				<div class="order-container">
+					<span>{{ order['order_date'] }}</span>
+					<span>{{ order['total'] }}</span>
+
+				</div>
+			{% endfor %}
+		</div>
 	  
 	  
 	</body>

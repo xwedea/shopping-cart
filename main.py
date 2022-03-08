@@ -5,6 +5,7 @@ from flask import Flask, session, render_template, redirect, url_for, request
 import sqlite3
 from livereload import Server
 import re
+import time
 
 app = Flask('app')
 app.secret_key = "CHANGE ME, ok"
@@ -147,28 +148,35 @@ def cart():
 	else: # POST
 		cart = session["cart"]
 		if request.form["action"] == "checkout":
-			# error_qty = False
+			total = 0
+			cur_time = time.strftime('%Y-%m-%d %H:%M:%S')
+
 			for id in cart.keys():
 				cursor.execute("select * from product where id = ?", (id,))
 				product = cursor.fetchone()
 				new_qty = int(request.form["quantity-" + str(id)])					
 				if new_qty > product["stock"]:
 					msg = f"There are {product['stock']} {product['name']} in stock! You specified {new_qty}"
-					# error_qty = True
 					return render_template("cart.html", cart=cart, msg=msg)
 				elif new_qty < 0:
 					msg = f"We don't know how to deliver {new_qty} {product['name']}"
-					# error_qty = True
 					return render_template("cart.html", cart=cart, msg=msg)
 			
+			# if no error in quantities -> checkout
 			for id in cart.keys():
 				cursor.execute("select * from product where id = ?", (id,))
 				product = cursor.fetchone()
 				new_qty = int(request.form["quantity-" + str(id)])
 
+				total += new_qty * product["price"]
 				cursor.execute("update product set stock = ? where id = ?", (product['stock']-new_qty, id))
 				connection.commit()
 				session["cart"] = {}
+			
+			print(cur_time)
+			cursor.execute("insert into orders values (?,?,?)", 
+			(session["email"], cur_time, total))
+			connection.commit()
 			
 
 		elif request.form["action"] == "update":
