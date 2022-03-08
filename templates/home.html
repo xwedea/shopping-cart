@@ -1,0 +1,50 @@
+<DOCTYPE html>
+	<html>
+	<head>
+	  <title>
+		Zamazon
+	  </title>
+	  <link rel="stylesheet" href="static/styles.css">
+	
+	</head>
+	<body>
+	  <header class="nav">
+			<div class="name-and-search">
+				<span class="brand-name"><a href="/">Zamazon</a></span>
+				<form action="/product" method="get" class="product-form">
+					<input type="text" name="name" id="product-text" placeholder="What do you need?">
+					<input type="submit" value="Search">
+				</form>
+			</div>
+			<ul class="navigations">
+				<li><a class="navigation" href="/">Home</a></li>
+				<li><a class="navigation" href="/orders">Orders</a></li>
+				<li><a class="navigation" href="/cart">Cart</a></li>
+				<li><a class="navigation" href="/login">Login</a></li>
+				<li><a class="navigation" href="/signup">Sign up</a></li>
+
+			</ul>
+		</header>
+	  <div class="container">
+		<div class="options">
+			<form action="/" method="get">
+				<!-- <label for="filter">Filter by category</label> -->
+				<input type="text" name="category" id="category-text" placeholder="Search by category">
+				<input type="submit" value="Filter">
+			</form>
+		</div>
+		<div class="products">
+		{% for product in products %}
+		<a href="/product?id={{product['id']}}">
+		  <div class="product">
+			<span class="product-name">{{ product["name"] }}</span>
+			<span class="product-quantity">stock:{{ product["stock"] }}</span>
+			<span class="product-price">price:{{ product["price"] }}</span>
+		  </div>
+		</a>
+		{% endfor %}
+	  </div>
+	  </div>
+	  
+	</body>
+	</html>

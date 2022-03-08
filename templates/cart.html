@@ -1,0 +1,61 @@
+<DOCTYPE html>
+	<html>
+	<head>
+	  <title>
+		Zamazon
+	  </title>
+	  <link rel="stylesheet" href="static/styles.css">
+	
+	</head>
+	<body>
+	  <header class="nav">
+			<div class="name-and-search">
+				<span class="brand-name"><a href="/">Zamazon</a></span>
+				<form action="/product" method="get" class="product-form">
+					<input type="text" name="name" id="product-text" placeholder="What do you need?">
+					<input type="submit" value="Search">
+				</form>
+			</div>
+			<ul class="navigations">
+				<li><a class="navigation" href="/">Home</a></li>
+				<li><a class="navigation" href="/orders">Orders</a></li>
+				<li><a class="navigation" href="/cart">Cart</a></li>
+				<li><a class="navigation" href="/login">Login</a></li>
+				<li><a class="navigation" href="/signup">Sign up</a></li>
+
+			</ul>
+		</header>
+	  <div class="container">
+			<div class="cart-container">
+				<form action="/cart" method="post">
+					<input type="submit" name="action" value="checkout">
+					<input type="submit" name="action" value="update">
+					<br>
+					<table>
+						<tr>
+							<th>Name</th>
+							<th>Quantity</th>
+						</tr>
+						{% for product in cart %}
+							<tr>
+								<td>
+									<input type="hidden" name="id", value="{{product['id']}}">
+									<input type="text" name="name" value="{{product['name']}}">
+								</td>
+								<td>
+									<input type="text" name="quantity-{{product['id']}}" value="{{product['quantity']}}">
+								</td>
+							</tr>
+						{% endfor %}
+					</table>
+				</form>
+
+			</div>
+		</div>
+	  
+	</body>
+
+	<script>
+
+	</script>
+	</html>

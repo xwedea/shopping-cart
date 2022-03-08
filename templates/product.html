@@ -1,0 +1,46 @@
+<DOCTYPE html>
+	<html>
+	<head>
+	  <title>Zamazon</title>
+	  <link rel="stylesheet" href="static/styles.css">
+	</head>
+	<body>
+	  <header class="nav">
+			<div class="name-and-search">
+				<span class="brand-name"><a href="/">Zamazon</a></span>
+				<form action="/product" method="get" class="product-form">
+					<input type="text" name="name" id="product-text" placeholder="What do you need?">
+					<input type="submit" value="Search">
+				</form>
+			</div>
+			<ul class="navigations">
+				<li><a class="navigation" href="/">Home</a></li>
+				<li><a class="navigation" href="/orders">Orders</a></li>
+				<li><a class="navigation" href="/cart">Cart</a></li>
+				<li><a class="navigation" href="/login">Login</a></li>
+				<li><a class="navigation" href="/signup">Sign up</a></li>
+
+			</ul>
+		</header>
+	  <div class="product-page-container">
+			<div class="photo-div">
+				<img src="static/demo.jpg" alt="">
+			</div>
+			<div class="right-container">
+				<div class="information-div">
+					<span class="product-name">{{ product["name"] }}</span>
+					<span class="product-price">${{ product["price"] }}</span>
+					<span class="product-quantity">{{ product["stock"] }} left in stock</span>
+				</div>
+				<div class="add-to-cart">
+					<form action="/add-to-cart" method="POST">
+						<input type="hidden" name="product-id" value="{{product['id']}}">
+						<input type="hidden" name="product-name" value="{{product['name']}}">						
+						<input type="submit" value="Add to cart">
+					</form>
+				</div>
+			</div>
+	  </div>
+	  
+	</body>
+	</html>
