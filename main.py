@@ -154,7 +154,7 @@ def cart():
 			for id in cart.keys():
 				cursor.execute("select * from product where id = ?", (id,))
 				product = cursor.fetchone()
-				new_qty = int(request.form["quantity-" + str(id)])					
+				new_qty = int(request.form["quantity-" + str(id)])	
 				if new_qty > product["stock"]:
 					msg = f"There are {product['stock']} {product['name']} in stock! You specified {new_qty}"
 					return render_template("cart.html", cart=cart, msg=msg)
@@ -170,12 +170,14 @@ def cart():
 
 				total += new_qty * product["price"]
 				cursor.execute("update product set stock = ? where id = ?", (product['stock']-new_qty, id))
+				cursor.execute("insert into order_product values (?,?,?,?)", (session["email"],cur_time,id,new_qty))
 				connection.commit()
+
 				session["cart"] = {}
+
 			
 			print(cur_time)
-			cursor.execute("insert into orders values (?,?,?)", 
-			(session["email"], cur_time, total))
+			cursor.execute("insert into orders values (?,?,?)", (session["email"], cur_time, total))
 			connection.commit()
 			
 
@@ -209,9 +211,11 @@ def orders():
 
 	if session.get("email"):
 		email = session["email"]
-		cursor.execute("SELECT * FROM orders WHERE customer_email=?", (email,))
+		cursor.execute("SELECT * FROM orders JOIN order_product ON orders.order_date = order_product.date_of_order JOIN product ON order_product.product_id = product.id WHERE customer_email=?", (email,))
+		products = cursor.fetchall()
+		cursor.execute("SELECT * FROM orders")
 		orders = cursor.fetchall()
-		return render_template("orders.html", orders=orders)
+		return render_template("orders.html", products=products, orders=orders)
 	else:
 		return redirect("/login")
 

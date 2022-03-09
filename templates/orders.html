@@ -25,12 +25,34 @@
 			</ul>
 		</header>
 		<div class="orders-container">
+			<h1>Order History</h1>
 			{% for order in orders %}
-				<div class="order-container">
-					<span>{{ order['order_date'] }}</span>
-					<span>{{ order['total'] }}</span>
+					<div class="order-container">
+						<div class="order-header">
+							<span>{{ order['order_date'] }}</span>
+							<span>{{ order['total'] }}</span>
+						</div>
+						<table>
+							<tr>
+								<th>Item</th>
+								<th>Unit Price</th>
+								<th>Quantity</th>
+								<th>Total</th>
+							</tr>
+							{% for product in products %}
+							{% if product["order_date"] == order["order_date"] %}
+								<tr>
+									<td>{{product["name"]}}</td>
+									<td>{{product["price"]}}</td>
+									<td>{{product["quantity"]}}</td>
+									<td>{{product["price"]*product["quantity"]}}</td>
+								</tr>
+							{% endif %}
+							{% endfor %}
+						</table>
+					</div>
+					<br>
 
-				</div>
 			{% endfor %}
 		</div>
 	  
