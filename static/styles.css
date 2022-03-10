@@ -190,6 +190,7 @@ ul.navigations {
 }
 .cart-container h1 {
 	text-align: center;
+	margin-bottom: 50px;
 }
 .cart-container form {
 	text-align: center;
@@ -228,6 +229,7 @@ table, th, td {
 }
 .orders-container h1 {
 	text-align: center;
+	margin-bottom: 50px;
 }
 .orders-container table {
 	width: 100%;
@@ -240,7 +242,10 @@ table, th, td {
 	flex-direction: row;
 	justify-content: space-between;
 }
-
+.order-forms {
+	display:flex;
+	justify-content: space-between;
+}
 
 .error-container {
 	padding: 50px 50px;

@@ -26,10 +26,20 @@
 		</header>
 		<div class="orders-container">
 			<h1>Order History</h1>
+			<div class="order-forms">
+				<form action="/sort-orders" method="get">
+					<input type="submit" name="sort" value="newest">
+					<input type="submit" name="sort" value="oldest">
+				</form>
+				<form action="/orders" method="get">
+					<input type="text" name="product" id="product" placeholder="Search for ordered items">
+					<input type="submit" value="Search">
+				</form>
+			</div>
 			{% for order in orders %}
 					<div class="order-container">
 						<div class="order-header">
-							<span><b>Total: {{ order['total'] }}</b></span>
+							<span><b>Total: ${{ order['total'] }}</b></span>
 							<span><b>Order Date: {{ order['order_date'] }}</b></span>
 						</div>
 						<table>
@@ -43,9 +53,9 @@
 							{% if product["order_date"] == order["order_date"] %}
 								<tr>
 									<td>{{product["name"]}}</td>
-									<td>{{product["price"]}}</td>
+									<td>${{product["price"]}}</td>
 									<td>{{product["quantity"]}}</td>
-									<td>{{product["price"]*product["quantity"]}}</td>
+									<td>${{product["price"]*product["quantity"]}}</td>
 								</tr>
 							{% endif %}
 							{% endfor %}

@@ -210,21 +210,70 @@ def cart():
 	return render_template("cart.html", cart=cart, msg=msg)
 
 
-@app.route('/orders')
+@app.route('/orders', methods=["POST", "GET"])
 def orders():
 	connection = sqlite3.connect("shop.db")
 	connection.row_factory = sqlite3.Row
 	cursor = connection.cursor()
 
+	args = request.args
+	args.to_dict()
+
+	product = ""
+	if ("product" in args):
+		product = args["product"]
+
 	if session.get("email"):
-		email = session["email"]
-		cursor.execute("SELECT * FROM orders JOIN order_product ON orders.order_date = order_product.date_of_order JOIN product ON order_product.product_id = product.id WHERE customer_email=?", (email,))
-		products = cursor.fetchall()
-		cursor.execute("SELECT * FROM orders where customer_email=?", (email,))
-		orders = cursor.fetchall()
-		return render_template("orders.html", products=products, orders=orders)
+		if "sort" in args.keys():
+			if args["sort"] == "new":
+				email = session["email"]
+				cursor.execute("SELECT * FROM orders JOIN order_product ON orders.order_date = order_product.date_of_order JOIN product ON order_product.product_id = product.id WHERE customer_email=?", (email,))
+				products = cursor.fetchall()
+				cursor.execute("SELECT * FROM orders where customer_email=? ORDER BY order_date DESC", (email,))
+				orders = cursor.fetchall()
+				return render_template("orders.html", products=products, orders=orders, product=product)
+			elif args["sort"] == "old":
+				email = session["email"]
+				cursor.execute("SELECT * FROM orders JOIN order_product ON orders.order_date = order_product.date_of_order JOIN product ON order_product.product_id = product.id WHERE customer_email=?", (email,))
+				products = cursor.fetchall()
+				cursor.execute("SELECT * FROM orders where customer_email=? ORDER BY order_date ASC", (email,))
+				orders = cursor.fetchall()
+				return render_template("orders.html", products=products, orders=orders, product=product)
+		else:
+			email = session["email"]
+			cursor.execute("SELECT * FROM orders JOIN order_product ON orders.order_date = order_product.date_of_order JOIN product ON order_product.product_id = product.id WHERE customer_email=?", (email,))
+			products = cursor.fetchall()
+			cursor.execute("SELECT * FROM orders where customer_email=?", (email,))
+			orders = cursor.fetchall()
+			return render_template("orders.html", products=products, orders=orders, product=product)
 	else:
 		return redirect("/login")
+
+# @app.route('/order-search')
+# def order_search():
+# 	connection = sqlite3.connect("shop.db")
+# 	connection.row_factory = sqlite3.Row
+# 	cursor = connection.cursor()
+
+# 	args = request.args
+# 	args.to_dict()
+
+# 	return redirect(f"/orders?item={args['item']}")
+
+@app.route('/sort-orders')
+def sort_orders():
+	connection = sqlite3.connect("shop.db")
+	connection.row_factory = sqlite3.Row
+	cursor = connection.cursor()
+
+	args = request.args
+	args.to_dict()
+
+	if args["sort"] == "newest":
+		return redirect('/orders?sort=new')
+	elif args["sort"] == "oldest":
+		return redirect('/orders?sort=old')
+
 
 
 
