@@ -51,6 +51,8 @@ VALUES (4323, "chocolate", 2, 10, "food");
 INSERT INTO product (id, name, price, stock, category)
 VALUES (4232, "pasta", 5, 34, "food");
 INSERT INTO product (id, name, price, stock, category)
+VALUES (4231, "chips", 4, 31, "food");
+INSERT INTO product (id, name, price, stock, category)
 VALUES (2145, "cheese", 6, 2, "food");
 INSERT INTO product (id, name, price, stock, category)
 VALUES (5343, "wine", 12, 5, "drinks");

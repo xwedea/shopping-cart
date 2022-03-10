@@ -29,8 +29,8 @@
 			{% for order in orders %}
 					<div class="order-container">
 						<div class="order-header">
-							<span>{{ order['order_date'] }}</span>
-							<span>{{ order['total'] }}</span>
+							<span><b>Total: {{ order['total'] }}</b></span>
+							<span><b>Order Date: {{ order['order_date'] }}</b></span>
 						</div>
 						<table>
 							<tr>
@@ -58,4 +58,6 @@
 	  
 	  
 	</body>
+
+
 	</html>

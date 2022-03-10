@@ -25,12 +25,15 @@
 
 			</ul>
 		</header>
-	  <div class="container">
-			<span>{{msg}}</span>
-			<div class="cart-container">
+	  <div class="cart-container">
+			<!-- <div class="cart-container"> -->
+				<h1>My Cart</h1>
+				<span>{{msg}}</span>
 				<form action="/cart" method="post">
 					<input type="submit" name="action" value="checkout">
 					<input type="submit" name="action" value="update">
+					<input type="submit" name="action" value="delete">
+					<br>
 					<br>
 					<table>
 						<tr>
@@ -52,7 +55,7 @@
 					</table>
 				</form>
 
-			</div>
+			<!-- </div> -->
 		</div>
 	  
 	</body>

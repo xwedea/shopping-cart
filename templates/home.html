@@ -26,13 +26,14 @@
 			</ul>
 		</header>
 	  <div class="container">
-		<div class="options">
-			<form action="/" method="get">
-				<!-- <label for="filter">Filter by category</label> -->
-				<input type="text" name="category" id="category-text" placeholder="Search by category">
-				<input type="submit" value="Filter">
-			</form>
-		</div>
+			<div class="options">
+				<form action="/" method="get">
+					<!-- <label for="filter">Filter by category</label> -->
+					<input type="text" name="category" id="category-text" placeholder="Search by category">
+					<input type="submit" value="Filter">
+				</form>
+			</div>
+			<hr>
 		<div class="products">
 		{% for product in products %}
 		<a href="/product?id={{product['id']}}">

@@ -31,6 +31,7 @@
 				<span class="logged_in-text">Logged in as {{session["name"]}}</span>
 				<br><br><br><br>
 				<form action="/logout" method="post">
+					<input type="hidden" name="page" value="login">
 					<input type="submit" value="Logout">
 				</form>
 			{% else %}

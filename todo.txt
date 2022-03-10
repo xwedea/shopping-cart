@@ -1,0 +1,7 @@
+add pictures
+
+
+The logged in user can sort its orders by date.
+The logged in user can search for a product in his/her past orders.
+
+categories are clicked instead of typing

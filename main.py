@@ -151,6 +151,10 @@ def cart():
 			total = 0
 			cur_time = time.strftime('%Y-%m-%d %H:%M:%S')
 
+			if (not cart.keys()):
+				msg = "Can't checkout empty cart!"
+				return render_template("cart.html", cart=cart, msg=msg)
+
 			for id in cart.keys():
 				cursor.execute("select * from product where id = ?", (id,))
 				product = cursor.fetchone()
@@ -197,6 +201,9 @@ def cart():
 				else: # VALID INPUT
 					cart[id]["quantity"] = new_qty
 					session["cart"] = cart
+		elif request.form["action"] == "delete":
+			session["cart"] = {}
+				
 
 	cart = session["cart"]
 		
@@ -213,7 +220,7 @@ def orders():
 		email = session["email"]
 		cursor.execute("SELECT * FROM orders JOIN order_product ON orders.order_date = order_product.date_of_order JOIN product ON order_product.product_id = product.id WHERE customer_email=?", (email,))
 		products = cursor.fetchall()
-		cursor.execute("SELECT * FROM orders")
+		cursor.execute("SELECT * FROM orders where customer_email=?", (email,))
 		orders = cursor.fetchall()
 		return render_template("orders.html", products=products, orders=orders)
 	else:
@@ -227,8 +234,12 @@ def logout():
 	connection.row_factory = sqlite3.Row
 	cursor = connection.cursor()
 
+	page = request.form["page"]
 	session.clear()
-	return render_template("login.html")
+	if (page == "login"):
+		return render_template("login.html")
+	elif (page == "signup"):
+		return render_template("signup.html")
 
 if __name__ == '__main__':
     app.run(debug=True)
