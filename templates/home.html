@@ -29,7 +29,14 @@
 			<div class="options">
 				<form action="/" method="get">
 					<!-- <label for="filter">Filter by category</label> -->
-					<input type="text" name="category" id="category-text" placeholder="Search by category">
+					<!-- <input type="text" name="category" id="category-text" placeholder="Search by category"> -->
+          <select name="category" id="categories" value="Select">
+            <option disabled selected value> Select Category </option>
+
+            {% for category in categories %}
+              <option value="{{category['name']}}">{{category['name']}}</option>
+            {% endfor %}
+          </select>
 					<input type="submit" value="Filter">
 				</form>
 			</div>
@@ -38,9 +45,10 @@
 		{% for product in products %}
 		<a href="/product?id={{product['id']}}">
 		  <div class="product">
-			<span class="product-name">{{ product["name"] }}</span>
-			<span class="product-quantity">stock:{{ product["stock"] }}</span>
-			<span class="product-price">price:{{ product["price"] }}</span>
+        <img class="product-img" width="100px" src="static/img/{{product['name']}}.jpg"></img>
+			  <span class="product-name">{{ product["name"] }}</span>
+			  <span class="product-quantity">stock:{{ product["stock"] }}</span>
+			  <span class="product-price">price:{{ product["price"] }}</span>
 		  </div>
 		</a>
 		{% endfor %}
@@ -48,4 +56,5 @@
 	  </div>
 	  
 	</body>
+
 	</html>
