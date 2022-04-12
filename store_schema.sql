@@ -65,4 +65,9 @@ VALUES (6434, "pen", 4, 4, "office");
 INSERT INTO product (id, name, price, stock, category)
 VALUES (4362, "eraser", 1, 59, "office");
 
-
+INSERT INTO category (name)
+VALUES ("food");
+INSERT INTO category (name)
+VALUES ("drinks");
+INSERT INTO category (name)
+VALUES ("office");
