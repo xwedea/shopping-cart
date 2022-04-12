@@ -12,22 +12,25 @@ app.secret_key = "CHANGE ME, ok"
 
 @app.route('/')
 def main_page():
-	connection = sqlite3.connect("shop.db")
-	connection.row_factory = sqlite3.Row
-	cursor = connection.cursor()
-	
-	args = request.args
-	args.to_dict()
-	
-	if ("category" in args.keys()):
-		category = args["category"]
-		cursor.execute("SELECT * FROM product WHERE category=?", (category,))
-	else:
-		cursor.execute("SELECT * FROM product;")
+  connection = sqlite3.connect("shop.db")
+  connection.row_factory = sqlite3.Row
+  cursor = connection.cursor()
 
-	products = cursor.fetchall()
+  args = request.args
+  args.to_dict()
 
-	return render_template("home.html", products=products)
+  if ("category" in args.keys()):
+    category = args["category"]
+    cursor.execute("SELECT * FROM product WHERE   category=?", (category,))
+  else:
+    cursor.execute("SELECT * FROM product;")
+
+  products = cursor.fetchall()
+  cursor.execute("select * from category;")
+  categories = cursor.fetchall()
+  print("len: " + str(len(categories)))
+
+  return render_template("home.html", products=products, categories=categories)
 
 @app.route('/product')
 def product():
@@ -100,34 +103,37 @@ def login():
 
 @app.route('/signup', methods=["GET", "POST"])
 def signup():
-	connection = sqlite3.connect("shop.db")
-	connection.row_factory = sqlite3.Row
-	cursor = connection.cursor()
+  connection = sqlite3.connect("shop.db")
+  connection.row_factory = sqlite3.Row
+  cursor = connection.cursor()
+  cursor.execute("select user from user;")
+  users = cursor.fetchall()
+  
 
-	if request.method == "POST":
-		email = request.form["email"]
-		password = request.form["password"]
-		name = request.form["name"]
+  if request.method == "POST":
+    email = request.form["email"]
+    password = request.form["password"]
+    name = request.form["name"]
 
-		pat = "^[a-zA-Z0-9-_]+@[a-zA-Z0-9]+\.[a-z]{1,3}$"
-		if not re.match(pat, email):
-			error = "Invalid email!"
-			return render_template("signup.html", error=error)
-		elif len(password) < 4:
-			error = "Password length must be at least 4"
-			return render_template("signup.html", error=error)
-		elif name == "":
-			error = "Name cannot be blank!"
-			return render_template("signup.html", error=error)
-		else:
+    pat = "^[a-zA-Z0-9-_]+@[a-zA-Z0-9]+\.[a-z]{1,3}$"
+    if not re.match(pat, email):
+      error = "Invalid email!"
+      return render_template("signup.html", error=error)
+    elif len(password) < 4:
+      error = "Password length must be at least 4"
+      return render_template("signup.html", error=error)
+    elif name == "":
+      error = "Name cannot be blank!"
+      return render_template("signup.html", error=error)
+    else:
 
-			cursor.execute("INSERT INTO user VALUES (?,?,?)", (email, name, password))
-			connection.commit()
-
-			error = "Account succesfully created!"
-			return render_template("login.html", error=error)
-		
-	return render_template("signup.html")
+      cursor.execute("INSERT INTO user VALUES (?,?,?)", (email, name, password))
+      connection.commit()
+  
+      error = "Account succesfully created!"
+      return render_template("login.html", error=error)
+    
+  return render_template("signup.html")
 
 @app.route('/cart', methods=["POST", "GET"])
 def cart():
@@ -222,6 +228,15 @@ def orders():
 	product = ""
 	if ("product" in args):
 		product = args["product"]
+	
+		
+	# cursor.execute("SELECT * FROM orders JOIN order_product ON orders.order_date = order_product.date_of_order JOIN product ON order_product.product_id = product.id WHERE customer_email=?", (email,))
+	# products = cursor.fetchall()
+	# if (product):
+	# 	cursor.execute("SELECT * FROM orders JOIN order_product ON order_product.date_of_order = orders.order_date JOIN product ON product.id = order_product.product_id where customer_email=? and product.name=? ORDER BY order_date DESC", (email, product))
+	# else:
+	# 	cursor.execute("SELECT * FROM orders where customer_email=? ORDER BY order_date DESC", (email,))
+	# orders = cursor.fetchall()
 
 	if session.get("email"):
 		if "sort" in args.keys():
@@ -243,22 +258,15 @@ def orders():
 			email = session["email"]
 			cursor.execute("SELECT * FROM orders JOIN order_product ON orders.order_date = order_product.date_of_order JOIN product ON order_product.product_id = product.id WHERE customer_email=?", (email,))
 			products = cursor.fetchall()
-			cursor.execute("SELECT * FROM orders where customer_email=?", (email,))
+			if (product):
+				cursor.execute("SELECT * FROM orders JOIN order_product ON order_product.date_of_order = orders.order_date JOIN product ON product.id = order_product.product_id where customer_email=? and product.name=? ORDER BY order_date DESC", (email, product))
+			else:
+				cursor.execute("SELECT * FROM orders where customer_email=? ORDER BY order_date DESC", (email,))
 			orders = cursor.fetchall()
 			return render_template("orders.html", products=products, orders=orders, product=product)
 	else:
 		return redirect("/login")
 
-# @app.route('/order-search')
-# def order_search():
-# 	connection = sqlite3.connect("shop.db")
-# 	connection.row_factory = sqlite3.Row
-# 	cursor = connection.cursor()
-
-# 	args = request.args
-# 	args.to_dict()
-
-# 	return redirect(f"/orders?item={args['item']}")
 
 @app.route('/sort-orders')
 def sort_orders():
@@ -290,6 +298,9 @@ def logout():
 	elif (page == "signup"):
 		return render_template("signup.html")
 
-if __name__ == '__main__':
-    app.run(debug=True)
-# app.run(host='0.0.0.0', port=8080)
+# if __name__ == '__main__':
+#     app.run(debug=True)
+# # app.run(host='0.0.0.0', port=8080)
+
+
+app.run(host='0.0.0.0', port=8080)
